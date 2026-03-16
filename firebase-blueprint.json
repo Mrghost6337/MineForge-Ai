@@ -1,0 +1,105 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "User's email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User's display name"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "URL to user's profile picture"
+        },
+        "plan": {
+          "type": "string",
+          "enum": ["free", "pro", "ultra"],
+          "description": "User's subscription plan"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Account creation timestamp"
+        }
+      },
+      "required": ["uid", "email", "plan", "createdAt"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "A user's project (modpack, plugin, etc.)",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique project ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "ID of the user who owns the project"
+        },
+        "name": {
+          "type": "string",
+          "description": "Project name"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["modpack", "plugin", "datapack", "server", "litematica"],
+          "description": "Type of project"
+        },
+        "description": {
+          "type": "string",
+          "description": "Project description"
+        },
+        "prompt": {
+          "type": "string",
+          "description": "The AI prompt used to generate this project"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["generating", "completed", "failed"],
+          "description": "Current status of the project generation"
+        },
+        "data": {
+          "type": "string",
+          "description": "JSON stringified project data (mods list, code, etc.)"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["id", "userId", "name", "type", "status", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/User"
+      },
+      "description": "User profiles"
+    },
+    "/projects/{projectId}": {
+      "schema": {
+        "$ref": "#/entities/Project"
+      },
+      "description": "User projects"
+    }
+  }
+}
