@@ -61,8 +61,8 @@ export function Pricing() {
     <section id="pricing" className="py-32 relative">
       <div className="container mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-20">
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6">Simple, transparent pricing</h2>
-          <p className="text-lg text-gray-400">Choose the perfect plan for your Minecraft creation journey.</p>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-6">Simple, transparent pricing</h2>
+          <p className="text-lg text-gray-600">Choose the perfect plan for your Minecraft creation journey.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -73,33 +73,33 @@ export function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className={`glass-panel relative p-8 flex flex-col ${plan.popular ? 'border-blue-500/30 shadow-[0_0_40px_rgba(59,130,246,0.1)]' : ''}`}
+              className={`glass-panel relative p-8 flex flex-col ${plan.popular ? 'border-blue-400 shadow-[0_0_40px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/20' : ''}`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-blue-500 text-white text-xs font-bold rounded-full tracking-wide uppercase">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-blue-500 text-white text-xs font-bold rounded-full tracking-wide uppercase shadow-sm">
                   Most Popular
                 </div>
               )}
               
               <div className="mb-8">
-                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-6">
-                  <plan.icon className={`w-6 h-6 ${plan.popular ? 'text-blue-400' : 'text-gray-400'}`} />
+                <div className="w-12 h-12 rounded-2xl bg-white border border-gray-200 flex items-center justify-center mb-6 shadow-sm">
+                  <plan.icon className={`w-6 h-6 ${plan.popular ? 'text-blue-500' : 'text-gray-500'}`} />
                 </div>
-                <h3 className="text-2xl font-semibold text-white mb-2">{plan.name}</h3>
-                <p className="text-gray-400 text-sm h-10">{plan.desc}</p>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-2">{plan.name}</h3>
+                <p className="text-gray-600 text-sm h-10">{plan.desc}</p>
               </div>
 
               <div className="mb-8">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-5xl font-bold text-white tracking-tight">{plan.price}</span>
-                  <span className="text-gray-400">{plan.period}</span>
+                  <span className="text-5xl font-bold text-gray-900 tracking-tight">{plan.price}</span>
+                  <span className="text-gray-500">{plan.period}</span>
                 </div>
               </div>
 
               <ul className="space-y-4 mb-8 flex-1">
                 {plan.features.map((feature, j) => (
-                  <li key={j} className="flex items-start gap-3 text-sm text-gray-300">
-                    <Check className="w-5 h-5 text-blue-400 shrink-0" />
+                  <li key={j} className="flex items-start gap-3 text-sm text-gray-700">
+                    <Check className="w-5 h-5 text-blue-500 shrink-0" />
                     <span>{feature}</span>
                   </li>
                 ))}

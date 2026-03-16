@@ -7,8 +7,8 @@ export function Hero() {
     <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-[128px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[128px]" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-400/20 rounded-full blur-[128px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-400/20 rounded-full blur-[128px]" />
       </div>
 
       <div className="container mx-auto px-6 relative z-10 text-center">
@@ -18,7 +18,7 @@ export function Hero() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="max-w-4xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel mb-8 text-sm font-medium text-blue-400 border-blue-500/20">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel mb-8 text-sm font-medium text-blue-600 border-blue-500/20 shadow-sm">
             <Sparkles className="w-4 h-4" />
             <span>Introducing MineForge AI 2.0</span>
           </div>
@@ -27,7 +27,7 @@ export function Hero() {
             Build Minecraft<br />with Intelligence.
           </h1>
 
-          <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+          <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
             The ultimate AI platform for creators. Generate plugins, build modpacks, and deploy servers with unprecedented speed and precision.
           </p>
 
@@ -53,12 +53,12 @@ export function Hero() {
             { icon: Box, title: "Smart Modpacks", desc: "Auto-resolve dependencies and optimize performance instantly." },
             { icon: Server, title: "One-Click Hosting", desc: "Deploy your creations to high-performance servers in seconds." }
           ].map((feature, i) => (
-            <div key={i} className="glass-panel p-6 text-left hover:bg-white/[0.05] transition-colors duration-500">
-              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-4">
-                <feature.icon className="w-6 h-6 text-blue-400" />
+            <div key={i} className="glass-panel p-6 text-left hover:bg-white/80 transition-colors duration-500">
+              <div className="w-12 h-12 rounded-2xl bg-white border border-gray-200 flex items-center justify-center mb-4 shadow-sm">
+                <feature.icon className="w-6 h-6 text-blue-500" />
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">{feature.desc}</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">{feature.desc}</p>
             </div>
           ))}
         </motion.div>

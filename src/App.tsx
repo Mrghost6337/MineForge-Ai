@@ -11,16 +11,20 @@ import { Hero } from './components/Hero';
 import { Pricing } from './components/Pricing';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
+import { PluginBuilder } from './pages/PluginBuilder';
+import { ModpackBuilder } from './pages/ModpackBuilder';
+import { ServerManager } from './pages/ServerManager';
+import { LitematicaGen } from './pages/LitematicaGen';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 function LandingPage() {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <Navbar />
       <Hero />
       <Pricing />
       
-      <footer className="py-12 border-t border-white/10 text-center text-gray-500 text-sm">
+      <footer className="py-12 border-t border-gray-200 text-center text-gray-500 text-sm">
         <p>&copy; {new Date().getFullYear()} MineForge AI. All rights reserved.</p>
       </footer>
     </div>
@@ -38,6 +42,10 @@ export default function App() {
             
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard/plugins" element={<PluginBuilder />} />
+              <Route path="/dashboard/modpacks" element={<ModpackBuilder />} />
+              <Route path="/dashboard/servers" element={<ServerManager />} />
+              <Route path="/dashboard/litematica" element={<LitematicaGen />} />
             </Route>
           </Routes>
         </BrowserRouter>

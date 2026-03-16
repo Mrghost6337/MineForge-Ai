@@ -18,13 +18,13 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const baseStyles = "inline-flex items-center justify-center rounded-xl font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 disabled:opacity-50 disabled:pointer-events-none";
+  const baseStyles = "inline-flex items-center justify-center rounded-full font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-black/10 disabled:opacity-50 disabled:pointer-events-none";
   
   const variants = {
-    primary: "bg-white text-black hover:bg-gray-200 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)]",
-    secondary: "bg-zinc-800 text-white hover:bg-zinc-700 border border-zinc-700",
-    glass: "glass-button text-white",
-    ghost: "text-gray-400 hover:text-white hover:bg-white/5",
+    primary: "bg-black text-white hover:bg-gray-800 shadow-md hover:shadow-lg",
+    secondary: "bg-white text-black hover:bg-gray-50 border border-gray-200 shadow-sm",
+    glass: "glass-button",
+    ghost: "text-gray-600 hover:text-black hover:bg-black/5",
   };
   
   const sizes = {
