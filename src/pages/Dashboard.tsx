@@ -1,17 +1,31 @@
 import { motion } from 'motion/react';
 import { useAuth } from '../lib/auth-context';
-import { auth } from '../lib/firebase';
-import { signOut } from 'firebase/auth';
+import { supabase } from '../lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
-import { Code2, Box, Server, Settings, LogOut, Pickaxe } from 'lucide-react';
+import { Code2, Box, Server, Settings, LogOut, Pickaxe, Globe } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export function Dashboard() {
   const { user, userPlan } = useAuth();
   const navigate = useNavigate();
+  const [isDesktopRedirecting, setIsDesktopRedirecting] = useState(false);
+
+  useEffect(() => {
+    const isDesktopLogin = localStorage.getItem('desktopLogin') === 'true';
+    if (isDesktopLogin && user) {
+      setIsDesktopRedirecting(true);
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session) {
+          window.location.href = `mineforge://auth?token=${data.session.access_token}`;
+          localStorage.removeItem('desktopLogin');
+        }
+      });
+    }
+  }, [user]);
 
   const handleLogout = async () => {
-    await signOut(auth);
+    await supabase.auth.signOut();
     navigate('/');
   };
 
@@ -20,7 +34,28 @@ export function Dashboard() {
     { icon: Box, title: 'Modpack Studio', desc: 'Curate and optimize modpacks', href: '/dashboard/modpacks', color: 'text-purple-500', bg: 'bg-purple-50' },
     { icon: Server, title: 'Server Hosting', desc: 'Deploy and manage servers', href: '/dashboard/servers', color: 'text-emerald-500', bg: 'bg-emerald-50' },
     { icon: Pickaxe, title: 'Litematica Gen', desc: 'Create 3D structures', href: '/dashboard/litematica', color: 'text-amber-500', bg: 'bg-amber-50', pro: true },
+    { icon: Globe, title: 'Addon Browser', desc: 'Search Modrinth & CurseForge', href: '/dashboard/addons', color: 'text-indigo-500', bg: 'bg-indigo-50' },
   ];
+
+  const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'Creator';
+  const avatarUrl = user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${displayName}&background=random`;
+
+  if (isDesktopRedirecting) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
+        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-gray-100">
+          <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <Server className="w-8 h-8" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Login Successful!</h1>
+          <p className="text-gray-500 mb-8">You can now close this window and return to the MineForge Desktop App.</p>
+          <Button onClick={() => window.location.href = '/dashboard'} variant="secondary" className="w-full">
+            Continue to Web Dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 flex">
@@ -45,9 +80,9 @@ export function Dashboard() {
 
         <div className="mt-auto pt-6 border-t border-gray-200 space-y-4">
           <div className="flex items-center gap-3 px-4">
-            <img src={user?.photoURL || `https://ui-avatars.com/api/?name=${user?.email}&background=random`} alt="Avatar" className="w-10 h-10 rounded-full border border-gray-200 shadow-sm" />
+            <img src={avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full border border-gray-200 shadow-sm" />
             <div className="overflow-hidden">
-              <p className="text-sm font-medium truncate">{user?.displayName || user?.email?.split('@')[0]}</p>
+              <p className="text-sm font-medium truncate">{displayName}</p>
               <p className="text-xs text-gray-500 capitalize">{userPlan} Plan</p>
             </div>
           </div>
@@ -62,7 +97,7 @@ export function Dashboard() {
       <main className="flex-1 p-8 md:p-12 overflow-y-auto">
         <header className="mb-12 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight mb-2 text-gray-900">Welcome back, {user?.displayName?.split(' ')[0] || 'Creator'}</h1>
+            <h1 className="text-3xl font-bold tracking-tight mb-2 text-gray-900">Welcome back, {displayName.split(' ')[0]}</h1>
             <p className="text-gray-600">What are we building today?</p>
           </div>
           <Button variant="secondary" className="hidden sm:flex items-center gap-2">
@@ -71,7 +106,7 @@ export function Dashboard() {
           </Button>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {tools.map((tool, i) => (
             <motion.div
               key={tool.title}

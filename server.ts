@@ -3,6 +3,8 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from "url";
 import { GoogleGenAI, Type } from "@google/genai";
+import { Server } from "socket.io";
+import http from "http";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,12 +12,92 @@ const __dirname = path.dirname(__filename);
 async function startServer() {
   const app = express();
   const PORT = 3000;
+  const server = http.createServer(app);
+  const io = new Server(server, {
+    cors: { origin: "*" }
+  });
 
   app.use(express.json());
 
   // API routes FIRST
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
+  });
+
+  // Endpoint to download the host client script
+  app.get('/api/download-host-client', (req, res) => {
+    const userId = req.query.userId as string || 'YOUR_USER_ID_HERE';
+    const serverUrl = req.protocol + '://' + req.get('host');
+    
+    const hostClientPath = path.join(process.cwd(), 'host-client', 'index.js');
+    import('fs').then(fs => {
+      if (fs.existsSync(hostClientPath)) {
+        let content = fs.readFileSync(hostClientPath, 'utf-8');
+        content = content.replace('http://localhost:3000', serverUrl);
+        content = content.replace('YOUR_USER_ID_HERE', userId);
+        
+        res.setHeader('Content-disposition', 'attachment; filename=mineforge-host.js');
+        res.setHeader('Content-type', 'application/javascript');
+        res.send(content);
+      } else {
+        res.status(404).send('Host client script not found');
+      }
+    });
+  });
+
+  app.get('/api/download-host-package', (req, res) => {
+    const packagePath = path.join(process.cwd(), 'host-client', 'package.json');
+    import('fs').then(fs => {
+      if (fs.existsSync(packagePath)) {
+        res.download(packagePath, 'package.json');
+      } else {
+        res.status(404).send('Host client package.json not found');
+      }
+    });
+  });
+
+  // Handle Socket connections for Host Client
+  io.on("connection", (socket) => {
+    console.log("New connection:", socket.id);
+    
+    // Host Client Registration
+    socket.on("register_host", (data) => {
+      console.log(`Host registered for user ${data.userId} on ${data.os}`);
+      socket.join(`host_${data.userId}`);
+      // Notify web dashboard
+      io.to(`web_${data.userId}`).emit("host_connected", { hostId: socket.id, os: data.os });
+    });
+
+    // Web Dashboard Registration
+    socket.on("register_web", (data) => {
+      console.log(`Web dashboard registered for user ${data.userId}`);
+      socket.join(`web_${data.userId}`);
+      
+      // Check if host is already connected
+      const hostRoom = io.sockets.adapter.rooms.get(`host_${data.userId}`);
+      if (hostRoom && hostRoom.size > 0) {
+        socket.emit("host_connected", { hostId: Array.from(hostRoom)[0] });
+      }
+    });
+
+    // Relay commands from web to host
+    socket.on("command_to_host", (data) => {
+      io.to(`host_${data.userId}`).emit("execute_command", data.command);
+    });
+
+    // Relay logs from host to web
+    socket.on("log_from_host", (data) => {
+      io.to(`web_${data.userId}`).emit("server_log", data.log);
+    });
+    
+    // Relay stats from host to web
+    socket.on("stats_from_host", (data) => {
+      io.to(`web_${data.userId}`).emit("server_stats", data.stats);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected:", socket.id);
+    });
   });
 
   // Example AI Generation endpoint
@@ -74,7 +156,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  server.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }

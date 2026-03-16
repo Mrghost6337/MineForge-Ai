@@ -15,7 +15,9 @@ import { PluginBuilder } from './pages/PluginBuilder';
 import { ModpackBuilder } from './pages/ModpackBuilder';
 import { ServerManager } from './pages/ServerManager';
 import { LitematicaGen } from './pages/LitematicaGen';
+import { AddonBrowser } from './pages/AddonBrowser';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { Analytics } from '@vercel/analytics/react';
 
 function LandingPage() {
   return (
@@ -46,9 +48,11 @@ export default function App() {
               <Route path="/dashboard/modpacks" element={<ModpackBuilder />} />
               <Route path="/dashboard/servers" element={<ServerManager />} />
               <Route path="/dashboard/litematica" element={<LitematicaGen />} />
+              <Route path="/dashboard/addons" element={<AddonBrowser />} />
             </Route>
           </Routes>
         </BrowserRouter>
+        <Analytics />
       </AuthProvider>
     </ErrorBoundary>
   );
