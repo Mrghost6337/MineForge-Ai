@@ -18,6 +18,9 @@ import { LitematicaGen } from './pages/LitematicaGen';
 import { AddonBrowser } from './pages/AddonBrowser';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Analytics } from '@vercel/analytics/react';
+import { useState, useEffect } from 'react';
+import { Button } from './components/ui/Button';
+import { Key } from 'lucide-react';
 
 function LandingPage() {
   return (

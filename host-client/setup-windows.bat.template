@@ -1,0 +1,84 @@
+@echo off
+title MineForge Host Client Setup
+color 0B
+
+echo.
+echo  __  __ _             ______                      
+echo ^|  \/  ^| ^|           ^|  ____^|                     
+echo ^| \  / ^| ^|__  _ __   ^| ^|__ ___  _ __ __ _  ___ 
+echo ^| ^|\/^| ^| '_ \^| '_ \  ^|  __/ _ \^| '__/ _` ^|/ _ \
+echo ^| ^|  ^| ^| ^| ^| ^| ^| ^| ^| ^| ^| (_) ^| ^| ^| (_^| ^|  __/
+echo ^|_^|  ^|_^|_^| ^|_^|_^| ^|_^| ^|_^|  \___/^|_^|  \__, ^|\___^|
+echo                                      __/ ^|     
+echo                                     ^|___/      
+echo ============================================================
+echo           MineForge AI - Host Client Setup v1.0
+echo ============================================================
+echo.
+echo This script will set up the MineForge Host Client on your PC.
+echo.
+
+:: Check for Node.js
+echo [*] Checking for Node.js...
+node -v >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [!] Node.js is not installed!
+    echo [!] Node.js is required to run the MineForge Host Client.
+    echo.
+    echo [?] Would you like to download and install Node.js now? (Y/N)
+    set /p install_node=
+    if /i "%install_node%"=="Y" (
+        echo [*] Downloading Node.js installer...
+        powershell -Command "Invoke-WebRequest -Uri 'https://nodejs.org/dist/v20.11.1/node-v20.11.1-x64.msi' -OutFile 'node-setup.msi'"
+        echo [*] Running Node.js installer...
+        start /wait node-setup.msi
+        del node-setup.msi
+        echo.
+        echo [!] Please restart this script after Node.js installation is complete.
+        pause
+        exit
+    ) else (
+        echo [!] Setup cannot continue without Node.js.
+        pause
+        exit
+    )
+)
+
+echo [*] Node.js detected: 
+node -v
+echo.
+
+echo [*] Creating MineForge directory in C:\MineForge...
+if not exist "C:\MineForge" mkdir "C:\MineForge"
+cd /d "C:\MineForge"
+
+echo [*] Downloading Host Client files from MineForge Cloud...
+powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '%SERVER_URL%/api/download-host-client?userId=%USER_ID%' -OutFile 'index.js'"
+powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '%SERVER_URL%/api/download-host-package' -OutFile 'package.json'"
+
+echo [*] Installing required dependencies (this may take a minute)...
+call npm install --silent
+
+echo [*] Creating Desktop Shortcut...
+set SCRIPT_PATH=C:\MineForge\run-host.bat
+echo @echo off > "%SCRIPT_PATH%"
+echo title MineForge Host Client >> "%SCRIPT_PATH%"
+echo color 0A >> "%SCRIPT_PATH%"
+echo cd /d "C:\MineForge" >> "%SCRIPT_PATH%"
+echo echo Starting MineForge Host Client... >> "%SCRIPT_PATH%"
+echo node index.js >> "%SCRIPT_PATH%"
+echo pause >> "%SCRIPT_PATH%"
+
+powershell -Command "$s=(New-Object -COM WScript.Shell).CreateShortcut('%USERPROFILE%\Desktop\MineForge Host.lnk');$s.TargetPath='%SCRIPT_PATH%';$s.IconLocation='shell32.dll,12';$s.Save()"
+
+echo.
+echo ============================================================
+echo           Setup Complete!
+echo ============================================================
+echo.
+echo You can now find 'MineForge Host' on your Desktop.
+echo.
+echo [*] Starting Host Client for the first time...
+echo.
+node index.js
+pause

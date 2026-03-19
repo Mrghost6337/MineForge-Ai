@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Button } from '../components/ui/Button';
-import { Pickaxe, Play, Download, Settings, Loader2, ArrowLeft, Image as ImageIcon } from 'lucide-react';
+import { Pickaxe, Play, Download, Settings, Loader2, ArrowLeft, Image as ImageIcon, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../lib/auth-context';
 
 export function LitematicaGen() {
+  const { userPlan } = useAuth();
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<{ name: string; dimensions: string; blocks: number } | null>(null);
@@ -28,6 +30,40 @@ export function LitematicaGen() {
       setIsGenerating(false);
     }
   };
+
+  if (userPlan === 'free') {
+    return (
+      <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
+        <header className="border-b border-gray-200 bg-white/50 backdrop-blur-xl px-6 py-4 flex items-center gap-4 sticky top-0 z-10">
+          <Link to="/dashboard" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </Link>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center shadow-sm">
+              <Pickaxe className="w-4 h-4 text-amber-500" />
+            </div>
+            <span className="font-semibold tracking-tight">Litematica Generator</span>
+            <span className="text-[10px] uppercase font-bold tracking-wider bg-gradient-to-r from-amber-200 to-orange-300 text-orange-900 px-2 py-0.5 rounded-full ml-2">Pro</span>
+          </div>
+        </header>
+
+        <main className="flex-1 p-6 flex items-center justify-center">
+          <div className="max-w-md w-full bg-white p-8 rounded-3xl border border-gray-200 shadow-sm text-center">
+            <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Lock className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl font-bold mb-2">Pro Feature</h2>
+            <p className="text-gray-500 mb-8">
+              The AI Litematica Generator is only available on Pro and Ultra plans. Upgrade your account to generate 3D structures instantly.
+            </p>
+            <Button variant="primary" className="w-full bg-amber-500 hover:bg-amber-600 text-white">
+              Upgrade to Pro
+            </Button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col">

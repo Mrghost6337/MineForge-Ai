@@ -10,7 +10,9 @@
     "build:mac": "tsc && vite build && electron-builder --mac"
   },
   "dependencies": {
+    "electron-updater": "^6.1.7",
     "lucide-react": "^0.344.0",
+    "os-utils": "^0.0.14",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -40,6 +42,16 @@
     },
     "win": {
       "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "MineForge Host",
+      "runAfterFinish": true,
+      "installerHeaderIcon": "public/vite.svg",
+      "installerIcon": "public/vite.svg"
     },
     "protocols": {
       "name": "MineForge Auth",

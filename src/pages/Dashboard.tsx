@@ -25,6 +25,7 @@ export function Dashboard() {
   }, [user]);
 
   const handleLogout = async () => {
+    localStorage.removeItem('mock_user');
     await supabase.auth.signOut();
     navigate('/');
   };

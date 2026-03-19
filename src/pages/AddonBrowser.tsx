@@ -8,6 +8,7 @@ export function AddonBrowser() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [platform, setPlatform] = useState<'modrinth' | 'curseforge'>('modrinth');
   const [type, setType] = useState<'mod' | 'plugin'>('mod');
 
@@ -19,10 +20,12 @@ export function AddonBrowser() {
   const searchAddons = async (searchQuery = query) => {
     if (!searchQuery) return;
     setLoading(true);
+    setError(null);
     try {
       if (platform === 'modrinth') {
         const facets = type === 'mod' ? '[["project_type:mod"]]' : '[["project_type:plugin"]]';
         const res = await fetch(`https://api.modrinth.com/v2/search?query=${searchQuery}&facets=${facets}&limit=20`);
+        if (!res.ok) throw new Error(`Modrinth API error: ${res.status}`);
         const data = await res.json();
         setResults(data.hits || []);
       } else {
@@ -47,8 +50,9 @@ export function AddonBrowser() {
           }
         ]);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      setError(e.message === 'Failed to fetch' ? 'Failed to connect to Modrinth API. It might be blocked by your browser or adblocker.' : e.message);
     } finally {
       setLoading(false);
     }
@@ -124,7 +128,12 @@ export function AddonBrowser() {
 
         {/* Results Grid */}
         <div className="flex-1">
-          {loading ? (
+          {error ? (
+            <div className="flex flex-col items-center justify-center h-64 text-red-500 bg-red-50 rounded-2xl border border-red-100">
+              <p className="font-medium mb-4">{error}</p>
+              <Button variant="secondary" onClick={() => searchAddons()}>Try Again</Button>
+            </div>
+          ) : loading ? (
             <div className="flex flex-col items-center justify-center h-64 text-gray-500">
               <Loader2 className="w-8 h-8 animate-spin mb-4 text-indigo-500" />
               <p>Searching {platform} database...</p>
